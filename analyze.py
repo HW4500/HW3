@@ -1,7 +1,9 @@
 import sys
 import csv
 #To read : here we consider that day 0 is the initial day, therefore if N=1, we give the return for the first day, (p(1)-p(0))/p(0)
-#Because of that, N cannot go over 249
+#because of that, N cannot go over 249
+#The output.write's written as commentaries can replace the present writing loop to have the assets returns and then the covariance matrix
+
 
 if len(sys.argv) != 5:
 	sys.exit("usage: analyze.py datafilename outputfilename number_of_asset number_of_days\n")
@@ -27,7 +29,7 @@ try:
 except IOError:
 	sys.exit("Cannot open file %s\n" % sys.argv[1])
 
-#now opening the output file to write 
+#now opening the output file to write
 try:
 	output = open(sys.argv[2], 'w') # opens the file
 except IOError:
@@ -35,7 +37,7 @@ except IOError:
 	
 
 print("now writing output to file", sys.argv[2])
-output.write("number_of_assets: "+str(numasset)+" number_of_days: "+str(numday)+"\n")	
+output.write("number_of_assets: "+str(numasset)+" number_of_days: "+str(numday)+"\n\n")	
 	
 #creating and calculating average asset returns list
 avg_asset_return=[]
@@ -46,9 +48,12 @@ for i in range(numasset):
 		returns+=(float(asset_prices_i[t+1])-float(asset_prices_i[t]))/float(asset_prices_i[t])
 	returns=returns/numday
 	avg_asset_return.append(returns)
+	#output.write("Average_return_of_asset_"+str(i+1)+": "+str(avg_asset_return[i])+"\n")
 
 
+	
 #creating and calculating covariance matrix	
+#output.write("\nCovariance matrix: \n\n")
 if numday==1:
 	#Not sure of the covariance with just one term, but I choose 0 by default for now
 	covariance_matrix=[[0]*numasset]*numasset
@@ -65,8 +70,10 @@ else:
 			#as it is a sample, we divide by T-1 and not by T
 			covariance=sum/(numday-1)
 			covariance_matrix[i].append(covariance)
+			#output.write(str(covariance_matrix[i][j])+" ")
+		#output.write("\n")
 
-#writing the results in a .txt file
+#writing loop: writing the results in a .txt file
 for i in range(numasset):
 	output.write("Average_return_of_asset_"+str(i+1)+": "+str(avg_asset_return[i])+"   Correlation_with_respect_to_assets_1_to_K: ")
 	for j in range(numasset):
@@ -74,8 +81,5 @@ for i in range(numasset):
 	output.write("\n")
 
 output.close
-	
-
-	
 
 
