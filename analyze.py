@@ -27,7 +27,7 @@ try:
 except IOError:
 	sys.exit("Cannot open file %s\n" % sys.argv[1])
 
-#now opening the output file to write
+#now opening the output file to write 
 try:
 	output = open(sys.argv[2], 'w') # opens the file
 except IOError:
