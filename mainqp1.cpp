@@ -3,6 +3,12 @@
 #include <string.h>
 #include <algorithm> 
 
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <windows.h>
+
 int readit(char *nameoffile, int *addressofn, double **, double **, double **, double *, double **);
 
 int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda, int depth);
@@ -13,19 +19,63 @@ int improvement(int n, double *x, double *lb, double *ub, int depth, double lamb
 
 double get_min(double a, double b);
 
+char does_it_exist(char *filename);
+
 int main(int argc, char **argv)
 {
   int retcode = 0;
+  char mybuffer[100];
   int n;
   int depth=1000;
-  double *lb, *ub, *covariance, *mu, lambda, *x;
+  double *lb, *ub, *covariance, *mu, lambda, *x,time;
+  char file[100];
+  FILE *out = NULL;
 
-  if (argc != 2){
-	  printf("usage: qp1 filename\n");  retcode = 1;
+  if (argc != 2 && argc !=3){
+	  printf("usage: qp1 filename\nor\nusage: qp1 nb_asset nb_day");  retcode = 1;
 	  goto BACK;
   }
 
-  retcode = readit(argv[1], &n, &lb, &ub, &mu, &lambda, &covariance);
+  if (argc==3){
+	    out = fopen("hidden.txt", "w");
+		fclose(out);
+
+		if (does_it_exist("analyze.py") == 0){
+			printf("need 'analyze.py'\n"); retcode = 1; goto BACK;
+		}
+
+		sprintf(mybuffer, "python analyze.py dump2.csv output.txt %s %s hidden.txt nothidden.txt", argv[1], argv[2]);
+
+		printf("mybuffer: %s\n", mybuffer);
+
+		if (does_it_exist("nothidden.txt")){
+			remove("nothidden.txt");
+		}
+
+		system(mybuffer);
+
+		/** sleep-wake cycle **/
+		
+		time=0;
+		while (time<100000){
+			if (does_it_exist("nothidden.txt")){
+				printf("\npython done!\n");
+				Sleep(1000);
+				break;
+			}
+			else{
+				Sleep(100);
+				time+=100;
+			}
+		}
+		sprintf(file, "output.txt");
+
+  }
+  else{
+	  sprintf(file,argv[2]);
+  }
+
+  retcode = readit(file, &n, &lb, &ub, &mu, &lambda, &covariance);
   if (retcode) goto BACK;
 
   x = (double *)calloc(n, sizeof(double));
@@ -253,4 +303,17 @@ double get_min(double a, double b)
 	if(a<b)
 		return a;
 	return b;
+}
+
+
+char does_it_exist(char *filename)
+{
+	struct stat buf;
+
+	// the function stat returns 0 if the file exists
+
+	if (0 == stat(filename, &buf)){
+		return 1;
+	}
+	else return 0;
 }
