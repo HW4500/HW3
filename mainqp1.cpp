@@ -42,11 +42,11 @@ int main(int argc, char **argv)
 	    out = fopen("hidden.txt", "w");
 		fclose(out);
 
-		if (does_it_exist("analyze2.py") == 0){
-			printf("need 'analyze2.py'\n"); retcode = 1; goto BACK;
+		if (does_it_exist("analyze.py") == 0){
+			printf("need 'analyze.py'\n"); retcode = 1; goto BACK;
 		}
 
-		sprintf(mybuffer, "python analyze2.py dump2.csv output.txt %s %s hidden.txt nothidden.txt", argv[1], argv[2]);
+		sprintf(mybuffer, "python analyze.py dump2.csv output.txt %s %s hidden.txt nothidden.txt", argv[1], argv[2]);
 
 		printf("mybuffer: %s\n", mybuffer);
 
