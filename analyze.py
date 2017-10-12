@@ -97,6 +97,7 @@ ordinate=avg_asset_return
 plt.plot(abscissa,ordinate,'rx')
 plt.xlabel('volatility')
 plt.ylabel('average rate of return')
-plt.savefig('plot.png')
+plt.title('Plot of the average of return as a function of the volatility for each asset')
+plt.savefig('plot.png',bbox_incher='tight')
 
 
