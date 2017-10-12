@@ -11,11 +11,13 @@
 
 int readit(char *nameoffile, int *addressofn, double **, double **, double **, double *, double **);
 
-int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda, int depth);
+int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda, int depth,double *adress_of_objective);
 
 int feasible(int n, double *x, double *lb, double *ub);
 
-int improvement(int n, double *x, double *lb, double *ub, int depth, double lambda, double *covariance, double *mu);
+int improvement(int n, double *x, double *lb, double *ub, int depth, double lambda, double *covariance, double *mu,double *adress_of_objective);
+
+int presentation(double objective, double *x,double *mu, double *covariance,int n);
 
 double get_min(double a, double b);
 
@@ -27,7 +29,7 @@ int main(int argc, char **argv)
   char mybuffer[100];
   int n;
   int depth=1000;
-  double *lb, *ub, *covariance, *mu, lambda, *x,time;
+  double *lb, *ub, *covariance, *mu, lambda, *x,time,objective;
   char file[100];
   FILE *out = NULL;
 
@@ -40,11 +42,11 @@ int main(int argc, char **argv)
 	    out = fopen("hidden.txt", "w");
 		fclose(out);
 
-		if (does_it_exist("analyze.py") == 0){
-			printf("need 'analyze.py'\n"); retcode = 1; goto BACK;
+		if (does_it_exist("analyze2.py") == 0){
+			printf("need 'analyze2.py'\n"); retcode = 1; goto BACK;
 		}
 
-		sprintf(mybuffer, "python analyze.py dump2.csv output.txt %s %s hidden.txt nothidden.txt", argv[1], argv[2]);
+		sprintf(mybuffer, "python analyze2.py dump2.csv output.txt %s %s hidden.txt nothidden.txt", argv[1], argv[2]);
 
 		printf("mybuffer: %s\n", mybuffer);
 
@@ -83,7 +85,9 @@ int main(int argc, char **argv)
 	  printf(" no memory for x\n"); retcode = 1; goto BACK;
   }
 
-  retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth); 
+  retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth,&objective); 
+
+  retcode = presentation(objective,x,mu,covariance,n);
   BACK:
   return retcode;
 }
@@ -171,7 +175,7 @@ BACK:
 }
 
 
-int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda,int depth)
+int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda,int depth,double *adress_of_objective)
 {
 	int returncode = 0;
 	int returncodef = 0;
@@ -182,7 +186,7 @@ int algo(int n, double *x, double *lb, double *ub, double *mu, double *covarianc
 	returncodef = feasible(n, x, lb, ub);
 	printf("The step 1 is done, and the problem is...\n");
 
-	returncodei = improvement(n, x, lb, ub,depth, lambda,covariance, mu);
+	returncodei = improvement(n, x, lb, ub,depth, lambda,covariance, mu,adress_of_objective);
 
 
 	return returncode;
@@ -230,7 +234,7 @@ int feasible(int n, double *x, double *lb, double *ub)
 	return returncode;
 }
 
-int improvement(int n, double *x, double *lb, double *ub, int depth,double lambda,double *covariance, double *mu)
+int improvement(int n, double *x, double *lb, double *ub, int depth,double lambda,double *covariance, double *mu,double *adress_of_objective)
 {
 	int returncode=0;
 	int pairs_visited=0;
@@ -289,8 +293,9 @@ int improvement(int n, double *x, double *lb, double *ub, int depth,double lambd
 		new_obj=0;
 		pairs_visited+=n*(n-1)/2;
 	}
-	printf("%d pairs have been corrected",pairs_visited);
+	printf("%d pairs have been corrected\n",pairs_visited);
 
+	*adress_of_objective=obj;
 
 
 	return returncode;
@@ -316,4 +321,27 @@ char does_it_exist(char *filename)
 		return 1;
 	}
 	else return 0;
+}
+
+int presentation(double objective, double *x,double *mu, double *covariance,int n)
+{
+	int returncode=0;
+	int i;
+	FILE *out = NULL;
+
+	out = fopen("final_sol.txt", "w");
+    if (!out){
+	  printf("cannot open final output file %s for writing\n", out); returncode = 400; 
+	  return returncode;
+    }
+	fprintf(out,"After the gradient descent, the final value of the objective function is %g\n\n",objective); 
+	for(i=0;i<n;i++){
+		if(x[i]>0){
+			fprintf(out,"The proportion of x%i in our optimal portfolio is: %g%%\n",i,100*x[i]); 
+		}
+	}
+	printf("\nwrote outputfile in final_sol.txt\n");
+	fclose(out);
+
+	return returncode;
 }
