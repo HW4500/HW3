@@ -13,4 +13,4 @@ To make the code work:
 
 
 
-(1)=The slow part of the code is the python part. It is where we should focus our work.
+(1)=The slow part of the code is the python part. It is where we should focus our work. By calculation, I think it should take a bit less than 9 minutes for the whole dataset
