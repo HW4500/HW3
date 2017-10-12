@@ -55,16 +55,15 @@ for i in range(numasset):
 	output.write(str(i)+" "+str(lower)+"   "+str(upper)+"  "+str(avg_asset_return[i])+"\n")
 
 output.write("\nlambda "+str(lambdain)+"\n\n")
-	
-#creating and calculating covariance matrix	
+
+#creating and calculating covariance matrix
 output.write("Covariance_matrix: \n\n")
 if numday==1:
 	#Not sure of the covariance with just one term, but I choose 0 by default for now
-	covariance_matrix=[[0]*numasset]*numasset
+	covariance_matrix=[0]*(numasset*numasset)
 else:
 	covariance_matrix=[]
 	for i in range(numasset):
-		covariance_matrix.append([])
 		asset_prices_i=l[i][:numday+1]
 		for j in range(numasset):
 			asset_prices_j=l[j][:numday+1]
@@ -73,11 +72,11 @@ else:
 				sum+=(((float(asset_prices_i[t+1])-float(asset_prices_i[t]))/float(asset_prices_i[t]))-avg_asset_return[i])*(((float(asset_prices_j[t+1])-float(asset_prices_j[t]))/float(asset_prices_j[t]))-avg_asset_return[j])
 			#as it is a sample, we divide by T-1 and not by T
 			covariance=sum/(numday-1)
-			covariance_matrix[i].append(covariance)
-			output.write(str(covariance_matrix[i][j])+" ")
+			covariance_matrix.append(covariance)
+			output.write(str(covariance_matrix[i*numasset+j])+" ")
 		output.write("\n")
 
-
+		
 
 output.write("\nEND")
 	
@@ -91,7 +90,7 @@ import matplotlib.pyplot as plt
 plt.figure()
 abscissa=[]
 for i in range(numasset):
-	abscissa.append(covariance_matrix[i][i])
+	abscissa.append(covariance_matrix[i*numasset+i])
 ordinate=avg_asset_return
 
 plt.plot(abscissa,ordinate,'rx')
@@ -99,5 +98,4 @@ plt.xlabel('volatility')
 plt.ylabel('average rate of return')
 plt.title('Plot of the average of return as a function of the volatility for each asset')
 plt.savefig('plot.png',bbox_incher='tight')
-
 
