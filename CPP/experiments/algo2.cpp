@@ -16,3 +16,13 @@ int algo2()
 {
   
 }
+
+int improvement2()
+{
+  
+}
+
+int feasible2()
+{
+  
+}
