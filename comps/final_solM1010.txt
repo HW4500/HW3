@@ -1,0 +1,11 @@
+After the gradient descent, the final value of the objective function is 0.0025226 and the average rate of retrun of the portfolio is -0.00162249
+
+The proportion of x0 in our optimal portfolio is: 5.45032%
+The proportion of x1 in our optimal portfolio is: 10.3088%
+The proportion of x2 in our optimal portfolio is: 4.18818%
+The proportion of x3 in our optimal portfolio is: 20%
+The proportion of x4 in our optimal portfolio is: 20%
+The proportion of x5 in our optimal portfolio is: 20%
+The proportion of x6 in our optimal portfolio is: 20%
+The proportion of x8 in our optimal portfolio is: 0.0527011%
+END
