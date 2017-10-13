@@ -9,6 +9,7 @@
 
 #include <windows.h>
 
+#include "algo.h"
 #include "algo2.h"
 #include "read_write.h"
 #include "tools.h"
@@ -79,6 +80,10 @@ int main(int argc, char **argv)
   }
 
   retcode = algo2(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret); 
+  if(retcode){
+	  printf("Error, the program returned the code %i\n",retcode);
+	  goto BACK;
+  }
 
   retcode = presentation(objective,x,mu,covariance,n,avgret);
   
@@ -90,11 +95,11 @@ int main(int argc, char **argv)
 	system(mybuffer);
   }
   else{
-	sprintf(mybuffer, "python presentator.py example.txt final_sol.txt");
-	
-        printf("mybuffer: %s\n", mybuffer);
+	  sprintf(mybuffer, "python presentator.py example.txt final_sol.txt");
+	  
+	  printf("mybuffer: %s\n", mybuffer);
 
-	system(mybuffer);
+	  system(mybuffer);
   }
 
   BACK:
