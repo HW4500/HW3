@@ -89,6 +89,13 @@ int main(int argc, char **argv)
 
 	system(mybuffer);
   }
+  else{
+	sprintf(mybuffer, "python presentator.py example.txt final_sol.txt");
+	
+        printf("mybuffer: %s\n", mybuffer);
+
+	system(mybuffer);
+  }
 
   BACK:
   return retcode;
