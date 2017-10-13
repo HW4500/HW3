@@ -46,10 +46,13 @@ output.write("n "+str(numasset)+"\n\nj_lower_upper_mu\n\n")
 	
 #calculating average asset returns list
 for i in range(numasset):
-	asset_prices_i=l[i][:numday+1]
+	asset_prices_i=[0]*(numday+1)
+	for j in range(numday+1):
+		l[i][j]=float(l[i][j])
+		asset_prices_i[j]=l[i][j]
 	returns=0
 	for t in range(numday):
-		returns+=(float(asset_prices_i[t+1])-float(asset_prices_i[t]))/float(asset_prices_i[t])
+		returns+=((asset_prices_i[t+1])-(asset_prices_i[t]))/(asset_prices_i[t])
 	returns=returns/numday
 	avg_asset_return.append(returns)
 	output.write(str(i)+" "+str(lower)+"   "+str(upper)+"  "+str(avg_asset_return[i])+"\n")
@@ -69,7 +72,7 @@ else:
 			asset_prices_j=l[j][:numday+1]
 			sum=0
 			for t in range(numday):
-				sum+=(((float(asset_prices_i[t+1])-float(asset_prices_i[t]))/float(asset_prices_i[t]))-avg_asset_return[i])*(((float(asset_prices_j[t+1])-float(asset_prices_j[t]))/float(asset_prices_j[t]))-avg_asset_return[j])
+				sum+=((((asset_prices_i[t+1])-(asset_prices_i[t]))/(asset_prices_i[t]))-avg_asset_return[i])*((((asset_prices_j[t+1])-(asset_prices_j[t]))/(asset_prices_j[t]))-avg_asset_return[j])
 			#as it is a sample, we divide by T-1 and not by T
 			covariance=sum/(numday-1)
 			covariance_matrix.append(covariance)
