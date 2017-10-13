@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 	  printf(" no memory for x\n"); retcode = 1; goto BACK;
   }
 
-  retcode = algo2(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret); 
+  retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret); 
   if(retcode){
 	  printf("Error, the program returned the code %i\n",retcode);
 	  goto BACK;
