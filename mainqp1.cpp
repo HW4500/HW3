@@ -11,13 +11,13 @@
 
 int readit(char *nameoffile, int *addressofn, double **, double **, double **, double *, double **);
 
-int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda, int depth,double *adress_of_objective);
+int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda, int depth,double *address_of_objective, double *address_of_avgret);
 
 int feasible(int n, double *x, double *lb, double *ub);
 
-int improvement(int n, double *x, double *lb, double *ub, int depth, double lambda, double *covariance, double *mu,double *adress_of_objective);
+int improvement(int n, double *x, double *lb, double *ub, int depth, double lambda, double *covariance, double *mu,double *address_of_objective,double *address_of_avgret);
 
-int presentation(double objective, double *x,double *mu, double *covariance,int n);
+int presentation(double objective, double *x,double *mu, double *covariance,int n,double avgret);
 
 double get_min(double a, double b);
 
@@ -29,16 +29,18 @@ int main(int argc, char **argv)
   char mybuffer[100];
   int n;
   int depth=1000;
-  double *lb, *ub, *covariance, *mu, lambda, *x,time,objective;
+  double *lb, *ub, *covariance, *mu, lambda, *x,time,objective,avgret;
   char file[100];
+  int val_argc;
   FILE *out = NULL;
 
-  if (argc != 2 && argc !=3){
+  val_argc=argc;
+  if (val_argc != 2 && val_argc !=3){
 	  printf("usage: qp1 filename\nor\nusage: qp1 nb_asset nb_day");  retcode = 1;
 	  goto BACK;
   }
 
-  if (argc==3){
+  if (val_argc==3){
 	    out = fopen("hidden.txt", "w");
 		fclose(out);
 
@@ -74,7 +76,7 @@ int main(int argc, char **argv)
 
   }
   else{
-	  sprintf(file,argv[2]);
+	  sprintf(file,argv[1]);
   }
 
   retcode = readit(file, &n, &lb, &ub, &mu, &lambda, &covariance);
@@ -85,9 +87,16 @@ int main(int argc, char **argv)
 	  printf(" no memory for x\n"); retcode = 1; goto BACK;
   }
 
-  retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth,&objective); 
+  retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret); 
 
-  retcode = presentation(objective,x,mu,covariance,n);
+  retcode = presentation(objective,x,mu,covariance,n,avgret);
+	
+  if(val_argc==3){
+	sprintf(mybuffer, "python presentator.py output.txt final_sol.txt");
+	printf("mybuffer: %s\n", mybuffer);
+	system(mybuffer);
+  }	
+  
   BACK:
   return retcode;
 }
@@ -175,7 +184,7 @@ BACK:
 }
 
 
-int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda,int depth,double *adress_of_objective)
+int algo(int n, double *x, double *lb, double *ub, double *mu, double *covariance, double lambda,int depth,double *address_of_objective,double *address_of_avgret)
 {
 	int returncode = 0;
 	int returncodef = 0;
@@ -186,7 +195,7 @@ int algo(int n, double *x, double *lb, double *ub, double *mu, double *covarianc
 	returncodef = feasible(n, x, lb, ub);
 	printf("The step 1 is done, and the problem is...\n");
 
-	returncodei = improvement(n, x, lb, ub,depth, lambda,covariance, mu,adress_of_objective);
+	returncodei = improvement(n, x, lb, ub,depth, lambda,covariance, mu,address_of_objective,address_of_avgret);
 
 
 	return returncode;
@@ -234,7 +243,7 @@ int feasible(int n, double *x, double *lb, double *ub)
 	return returncode;
 }
 
-int improvement(int n, double *x, double *lb, double *ub, int depth,double lambda,double *covariance, double *mu,double *adress_of_objective)
+int improvement(int n, double *x, double *lb, double *ub, int depth,double lambda,double *covariance, double *mu,double *adress_of_objective,double *adress_of_avgret)
 {
 	int returncode=0;
 	int pairs_visited=0;
@@ -296,6 +305,13 @@ int improvement(int n, double *x, double *lb, double *ub, int depth,double lambd
 	printf("%d pairs have been corrected\n",pairs_visited);
 
 	*adress_of_objective=obj;
+	
+	avgret=0;
+	for(i=0;i<n;i++){
+		printf("xi=%g, mui=%g, avgret+=%g",x[i],mu[i],x[i]*mu[i]);
+		avgret+=x[i]*mu[i];
+	}
+	*adress_of_avgret=avgret;
 
 
 	return returncode;
@@ -323,7 +339,7 @@ char does_it_exist(char *filename)
 	else return 0;
 }
 
-int presentation(double objective, double *x,double *mu, double *covariance,int n)
+int presentation(double objective, double *x,double *mu, double *covariance,int n,double avgret)
 {
 	int returncode=0;
 	int i;
@@ -334,13 +350,14 @@ int presentation(double objective, double *x,double *mu, double *covariance,int 
 	  printf("cannot open final output file %s for writing\n", out); returncode = 400; 
 	  return returncode;
     }
-	fprintf(out,"After the gradient descent, the final value of the objective function is %g\n\n",objective); 
+	fprintf(out,"After the gradient descent, the final value of the objective function is %g and the average rate of retrun of the portfolio is %g\n\n",objective,avgret); 
 	for(i=0;i<n;i++){
 		if(x[i]>0){
 			fprintf(out,"The proportion of x%i in our optimal portfolio is: %g%%\n",i,100*x[i]); 
 		}
 	}
 	printf("\nwrote outputfile in final_sol.txt\n");
+	fprintf(out,"END");
 	fclose(out);
 
 	return returncode;
