@@ -15,5 +15,5 @@ To make the code work:
 6) Call the .exe via the command line. Do be suprised if the result is not immediate, it takes for now 2 minutes to have a result for K=1000, N=250
 
 To launch Kecheng's code, replace in the main "retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret);" 
-by "retcode = algo(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret);" and vice versa.
+by "retcode = algo2(n, x, lb, ub, mu, covariance, lambda,depth,&objective,&avgret);" and vice versa.
 
