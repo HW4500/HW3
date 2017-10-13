@@ -9,7 +9,7 @@
 
 #include <windows.h>
 
-#include "algo.h"
+#include "algo2.h"
 #include "tools.h"
 
 int algo2()
