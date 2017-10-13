@@ -1,4 +1,7 @@
 # HW3
+
+Old Branch, still working but not updated after 10/13/17 see MultiSheet or other.
+
 The file analyse.py is the one taking as an entry the dataset (csv file) and having as an output a text file containing the same info as example.txt
 
 the cpp code is only in its second version. Very messy, only one sheet instead of one per function, but works for the example (tested it versus Matlab) and now seems to work for any file (not tested versus Matlab yet).
