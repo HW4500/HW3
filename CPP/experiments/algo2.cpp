@@ -50,8 +50,8 @@ int algo2(int n, double *x, double *lb, double *ub, double *mu, double *covarian
       	  x[j] = x[j] + s * y[j]; 
         }
         retcode22 = F(lambda, n, covariance, mu, x,&newF);
-		system("pause");
-		printf("%f,%f",oldF,newF);
+		//system("pause");
+		//printf("%f,%f",oldF,newF);
     }
 	retcode23=F(lambda, n, covariance, mu, x,&optimal);
     printf ("Hello! optimal value = %f\nportfolio:\n",optimal );
@@ -59,7 +59,7 @@ int algo2(int n, double *x, double *lb, double *ub, double *mu, double *covarian
 	avgret=0;
     for(int l=0;l<n;l++){
 		avgret+=x[l]*mu[l];
-		printf("%f\n",x[l]);
+		//printf("%f\n",x[l]);
 	}
 	*address_of_avgret=avgret;
     *address_of_objective=optimal; 
@@ -151,7 +151,7 @@ int find_y(double *x, int n, double lambda, double *lb, double *ub, double *mu, 
     	if(-temp_sum < ub_y[temp_flag] && -temp_sum > lb_y[temp_flag]){
     		//legal! we found y!
     		y[temp_flag] = -temp_sum;
-			*address_of_y=y;
+	        *address_of_y=y;
     		return returncode; 
     	}
     }
