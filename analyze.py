@@ -1,6 +1,7 @@
 import sys
 import csv
 import os
+from math imort *
 #To read : here we consider that day 0 is the initial day, therefore if N=1, we give the return for the first day, (p(1)-p(0))/p(0)
 #because of that, N cannot go over 249
 
@@ -9,7 +10,6 @@ if len(sys.argv) != 7:
 
 #now reading and memorizing the values of the number of assets or the number of days
 l=[]
-print(sys.argv[3])
 try:
 	numasset=int(sys.argv[3])
 	numday=int(sys.argv[4])
@@ -83,19 +83,3 @@ output.write("\nEND")
 output.close
 print("renaming ", sys.argv[5], "into ", sys.argv[6])
 os.rename(sys.argv[5], sys.argv[6])
-
-
-import matplotlib.pyplot as plt
-
-plt.figure()
-abscissa=[]
-for i in range(numasset):
-	abscissa.append(covariance_matrix[i*numasset+i])
-ordinate=avg_asset_return
-
-plt.plot(abscissa,ordinate,'rx')
-plt.xlabel('volatility')
-plt.ylabel('average rate of return')
-plt.title('Plot of the average of return as a function of the volatility for each asset')
-plt.savefig('plot.png',bbox_incher='tight')
-
