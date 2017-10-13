@@ -29,3 +29,12 @@ char does_it_exist(char *filename)
 	}
 	else return 0;
 }
+
+
+double sum(double *x, int n){
+	double summation = 0;
+	for(int i=0;i<n;i++){
+		summation += x[i];
+	}
+	return summation;
+}
