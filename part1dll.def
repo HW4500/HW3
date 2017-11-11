@@ -1,0 +1,11 @@
+LIBRARY part1dll
+
+EXPORTS  
+
+find_max_index @1
+normalize @2
+distance @3
+Qxw @4
+powermethod @5
+does_it_exist @6
+readit @7
